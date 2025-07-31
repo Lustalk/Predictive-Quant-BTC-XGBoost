@@ -230,10 +230,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🏆 Author
 
 **Lucas Lustosa**  
-*Data Scientist & Quantitative Developer*
+*Python Developer & Data Scientist in Career Transition*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://linkedin.com/in/your-profile)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Lustalk)
+I'm currently transitioning my career, focusing on applying my knowledge in **Python**, **data science**, and **automation** to build innovative solutions. This project demonstrates my expertise in data analysis, machine learning, system architecture, and DevOps practices using tools like **Pandas**, **NumPy**, **Scikit-learn**, and **Docker**.
+
+Currently seeking opportunities to leverage my technical expertise in efficient, data-driven systems. Open to new challenges as a **Data Scientist** or **Python Developer**!
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lucas-lustosa-91969b105)
+[![Email](https://img.shields.io/badge/Email-Contact-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:lpl.lustosa@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Lustalk)
 
 ---
 
