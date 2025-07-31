@@ -1,0 +1,89 @@
+# Core Data Science Libraries
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+
+# Machine Learning Libraries
+xgboost>=2.0.0
+lightgbm>=4.0.0
+catboost>=1.2.0
+
+# Deep Learning (Optional)
+torch>=2.0.0
+tensorflow>=2.13.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# Financial Data & APIs
+ccxt>=4.0.0
+yfinance>=0.2.0
+python-binance>=1.0.17
+
+# Database & Storage
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+redis>=4.5.0
+duckdb>=0.8.0
+
+# Web Framework (for API)
+fastapi>=0.100.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+
+# Async & Concurrency
+asyncio-mqtt>=0.13.0
+aiohttp>=3.8.0
+websockets>=11.0.0
+
+# Configuration & Logging
+python-dotenv>=1.0.0
+pydantic-settings>=2.0.0
+loguru>=0.7.0
+structlog>=23.1.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Code Quality
+black>=23.7.0
+isort>=5.12.0
+flake8>=6.0.0
+mypy>=1.5.0
+pre-commit>=3.3.0
+
+# Jupyter & Notebooks
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+ipywidgets>=8.0.0
+
+# Performance & Monitoring
+memory-profiler>=0.61.0
+psutil>=5.9.0
+py-spy>=0.3.14
+
+# Utilities
+tqdm>=4.65.0
+click>=8.1.0
+python-dateutil>=2.8.0
+pytz>=2023.3
+requests>=2.31.0
+
+# Mathematical & Statistical
+statsmodels>=0.14.0
+arch>=6.2.0  # For GARCH models
+ta>=0.10.2  # Technical Analysis (alternative to ta-lib)
+
+# Risk Management
+quantlib>=1.31  # Optional, for advanced derivatives pricing
+pyfolio-reloaded>=0.9.5  # Portfolio analytics
+
+# Production Dependencies
+gunicorn>=21.2.0
+supervisor>=4.2.0

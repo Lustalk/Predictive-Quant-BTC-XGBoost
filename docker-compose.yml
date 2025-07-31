@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  trading-app:
+    build: .
+    container_name: btc-trading-strategy
+    environment:
+      - PYTHONPATH=/app
+      - LOG_LEVEL=INFO
+      - ENV=development
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./config:/app/config
+    networks:
+      - trading-network
+    restart: unless-stopped
+    depends_on:
+      - database
+    
+  database:
+    image: postgres:15-alpine
+    container_name: trading-db
+    environment:
+      POSTGRES_DB: trading_data
+      POSTGRES_USER: trader
+      POSTGRES_PASSWORD: secure_password_123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: trading-cache
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+  jupyter:
+    build: .
+    container_name: trading-jupyter
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/app/notebooks
+      - ./data:/app/data
+      - ./src:/app/src
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONPATH=/app
+    networks:
+      - trading-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  trading-network:
+    driver: bridge

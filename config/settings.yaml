@@ -1,0 +1,208 @@
+# BTC Trading Strategy Configuration
+# This is the main configuration file for the trading system
+
+# Application Settings
+app:
+  name: "BTC Trading Strategy"
+  version: "0.1.0"
+  environment: "development"  # development, staging, production
+  debug: true
+  timezone: "UTC"
+
+# Data Collection Settings
+data:
+  symbols:
+    - "BTCUSDT"
+  timeframes:
+    - "1m"
+    - "5m" 
+    - "15m"
+    - "1h"
+    - "4h"
+    - "1d"
+  
+  # Data storage
+  storage:
+    backend: "duckdb"  # duckdb, postgresql, sqlite
+    database_url: "data/trading_data.db"
+    
+  # Data collection
+  collection:
+    lookback_days: 365
+    update_frequency: "5m"
+    max_retries: 3
+    timeout: 30
+
+# Exchange Configuration
+exchange:
+  name: "binance"
+  api_key: "${BINANCE_API_KEY}"  # Will be loaded from environment
+  api_secret: "${BINANCE_API_SECRET}"
+  sandbox: true  # Use testnet for development
+  
+  # Rate limiting
+  rate_limit:
+    requests_per_second: 10
+    burst_limit: 20
+
+# Feature Engineering
+features:
+  technical_indicators:
+    sma_windows: [5, 10, 20, 50, 100, 200]
+    ema_windows: [12, 26, 50, 100]
+    rsi_window: 14
+    macd_params:
+      fast: 12
+      slow: 26
+      signal: 9
+    bollinger_bands:
+      window: 20
+      std_dev: 2
+    atr_window: 14
+  
+  lag_features:
+    price_lags: [1, 2, 3, 6, 12, 24]
+    volume_lags: [1, 2, 3, 6]
+    volatility_lags: [1, 2, 3]
+  
+  # Feature selection
+  selection:
+    method: "mutual_info"  # mutual_info, chi2, f_classif
+    top_k: 50
+    correlation_threshold: 0.95
+
+# Machine Learning Models
+models:
+  xgboost:
+    n_estimators: 1000
+    max_depth: 6
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+    n_jobs: -1
+    early_stopping_rounds: 50
+    
+  lightgbm:
+    n_estimators: 1000
+    max_depth: 6
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+    n_jobs: -1
+    early_stopping_rounds: 50
+    
+  ensemble:
+    method: "stacking"  # voting, stacking
+    cv_folds: 5
+
+# Target Definition
+target:
+  prediction_horizon: 4  # hours
+  method: "binary_direction"  # binary_direction, volatility_adjusted
+  threshold: 0.001  # Minimum price change threshold
+
+# Validation Strategy
+validation:
+  method: "walk_forward"
+  train_window_months: 12
+  test_window_months: 1
+  step_size_months: 1
+  purge_hours: 24  # Gap between train and test
+  
+  # Cross-validation
+  cv_folds: 5
+  cv_method: "purged_group_time_series"
+
+# Trading Strategy
+strategy:
+  signal_generation:
+    confidence_threshold: 0.6
+    max_position_size: 1.0
+    risk_free_rate: 0.02
+    
+  position_sizing:
+    method: "kelly"  # kelly, fixed, volatility_adjusted
+    max_kelly_fraction: 0.25
+    uncertainty_adjustment: true
+    
+  risk_management:
+    max_drawdown: 0.2
+    stop_loss: 0.05
+    take_profit: 0.10
+    max_daily_trades: 10
+    position_timeout_hours: 24
+
+# Backtesting
+backtesting:
+  initial_capital: 100000
+  transaction_cost: 0.001  # 0.1%
+  slippage: 0.0005  # 0.05%
+  market_impact_model: "sqrt"
+  
+  # Performance metrics
+  benchmark: "buy_and_hold"
+  risk_free_rate: 0.02
+  
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # File logging
+  file:
+    enabled: true
+    path: "logs/trading.log"
+    max_size_mb: 100
+    backup_count: 5
+    
+  # Console logging
+  console:
+    enabled: true
+    level: "INFO"
+
+# Monitoring & Alerting
+monitoring:
+  enabled: true
+  
+  # System metrics
+  system:
+    check_interval_seconds: 60
+    memory_threshold_mb: 8000  # 8GB limit
+    cpu_threshold_percent: 80
+    
+  # Trading metrics
+  trading:
+    max_latency_seconds: 5
+    performance_check_hours: 24
+    
+  # Alerts
+  alerts:
+    email_enabled: false
+    slack_enabled: false
+    webhook_url: ""
+
+# Production Settings
+production:
+  # API Server
+  api:
+    host: "0.0.0.0"
+    port: 8000
+    workers: 1
+    
+  # Security
+  security:
+    secret_key: "${SECRET_KEY}"
+    allowed_hosts: ["localhost", "127.0.0.1"]
+    
+  # Database
+  database:
+    pool_size: 10
+    max_overflow: 20
+    
+  # Caching
+  cache:
+    backend: "redis"
+    url: "redis://localhost:6379/0"
+    ttl_seconds: 3600
