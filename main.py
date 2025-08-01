@@ -610,19 +610,35 @@ class PredictiveQuantBTCSystem:
         try:
             # 1. Performance Dashboard
             print("   📊 Creating performance dashboard...")
+            # Prepare results dictionary for visualization
+            results_dict = {
+                'feature_importance': metrics['feature_importance'],
+                'prediction_probabilities': metrics['y_test_proba'],
+                'y_true': y_test,
+                'y_pred': model.predict(pd.DataFrame(
+                    self.scaler.transform(X_test),
+                    columns=X_test.columns,
+                    index=X_test.index
+                ))
+            }
+            
+            model_metrics_dict = {
+                'accuracy': metrics['test_accuracy'],
+                'auc_score': metrics['auc_score'],
+                'overfitting_gap': metrics['overfitting_gap']
+            }
+            
             self.visualizer.create_performance_dashboard(
-                returns=backtest_results['strategy_returns'],
-                signals=backtest_results['signals'],
-                predictions=metrics['y_test_proba'],
-                accuracy=metrics['test_accuracy'],
-                sharpe_ratio=backtest_results['sharpe_ratio'],
-                max_drawdown=backtest_results['max_drawdown'],
+                results=results_dict,
+                model_metrics=model_metrics_dict,
+                backtest_results=backtest_results,
                 save_path='outputs/visualizations/performance_dashboard.png'
             )
             
             # 2. Feature Analysis
             print("   🔍 Creating feature analysis...")
-            correlation_matrix = X_train[feature_names[:15]].corr() if len(feature_names) >= 15 else X_train.corr()
+            # Use selected features for correlation matrix
+            correlation_matrix = X_train[feature_names[:15]].corr() if len(feature_names) >= 15 else X_train[feature_names].corr()
             self.visualizer.create_feature_analysis(
                 feature_importance=metrics['feature_importance'],
                 correlation_matrix=correlation_matrix,
@@ -631,10 +647,21 @@ class PredictiveQuantBTCSystem:
             
             # 3. Technical Analysis
             print("   📈 Creating technical analysis...")
-            self.visualizer.create_technical_analysis(
+            # Create basic technical indicators for visualization
+            from src.features.technical_indicators import TechnicalIndicators
+            tech_indicators = TechnicalIndicators()
+            
+            indicators_dict = {
+                'sma_20': tech_indicators.sma(data['close'], 20),
+                'ema_12': tech_indicators.ema(data['close'], 12),
+                'rsi': tech_indicators.rsi(data['close'], 14),
+                'macd': tech_indicators.macd(data['close'])['MACD']
+            }
+            
+            self.visualizer.create_technical_analysis_chart(
                 data=data,
+                indicators=indicators_dict,
                 signals=backtest_results['signals'],
-                predictions=metrics['y_test_proba'],
                 save_path='outputs/visualizations/technical_analysis.png'
             )
             
