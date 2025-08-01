@@ -708,7 +708,7 @@ class PredictiveQuantBTCSystem:
             print()
             
             # Step 1: Data Collection
-            data = self.collect_data()
+            data = self.collect_data(days=365)
             
             # Step 2: Feature Engineering
             features = self.engineer_features(data)
