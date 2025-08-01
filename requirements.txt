@@ -80,6 +80,12 @@ statsmodels>=0.14.0
 arch>=6.2.0  # For GARCH models
 ta>=0.10.2  # Technical Analysis (alternative to ta-lib)
 
+# Smart Optimization Dependencies
+scikit-optimize>=0.9.0  # Bayesian optimization
+hmmlearn>=0.3.0  # Hidden Markov Models for regime detection
+optuna>=3.4.0  # Alternative Bayesian optimization (optional)
+hyperopt>=0.2.7  # Alternative hyperparameter optimization (optional)
+
 # Risk Management
 quantlib>=1.31  # Optional, for advanced derivatives pricing
 pyfolio-reloaded>=0.9.5  # Portfolio analytics
