@@ -168,17 +168,16 @@ def test_real_btc_data():
         print(f"🎯 System ready for production use!")
         print("=" * 80)
         
-        return {
-            'success': True,
-            'data_dict': data_dict,
-            'aligned_data': aligned_data,
-            'metrics': {
-                'collection_time': collection_time,
-                'total_candles': total_candles,
-                'memory_usage_mb': total_memory,
-                'current_btc_price': data_dict['1h']['close'].iloc[-1]
-            }
-        }
+        # Assert that the test was successful
+        assert data_dict is not None, "Should have collected data"
+        assert aligned_data is not None, "Should have aligned data"
+        assert total_candles > 0, "Should have collected candles"
+        assert collection_time > 0, "Collection should take some time"
+        
+        print(f"\n✅ Real BTC data test passed!")
+        print(f"📊 Total candles: {total_candles:,}")
+        print(f"💾 Memory usage: {total_memory:.1f}MB")
+        print(f"💰 Current BTC price: ${data_dict['1h']['close'].iloc[-1]:.2f}")
         
     except Exception as e:
         print(f"\n❌ REAL DATA TEST FAILED: {e}")

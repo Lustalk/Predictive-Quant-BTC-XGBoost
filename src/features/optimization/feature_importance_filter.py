@@ -278,7 +278,7 @@ class FeatureImportanceFilter:
             aligned_features = aligned_features[valid_features]
             
             # Fill remaining NaNs
-            aligned_features = aligned_features.fillna(method='ffill').fillna(0)
+            aligned_features = aligned_features.ffill().fillna(0)
             
             self.logger.info(f"Aligned data: {len(aligned_features)} samples, {len(aligned_features.columns)} features")
             

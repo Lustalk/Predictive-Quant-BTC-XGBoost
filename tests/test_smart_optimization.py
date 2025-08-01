@@ -32,10 +32,10 @@ def test_imports():
             FeatureImportanceFilter
         )
         print("  ✅ All optimization components imported successfully")
-        return True
+        assert True, "Imports should succeed"
     except ImportError as e:
         print(f"  ❌ Import failed: {e}")
-        return False
+        assert False, "Test should not fail"
 
 def test_parameter_spaces():
     """Test parameter space definitions."""
@@ -60,10 +60,10 @@ def test_parameter_spaces():
         assert len(comp_space) > 5, "Composite space should have multiple parameters"
         
         print(f"  ✅ Parameter spaces working - {len(comp_names)} parameters defined")
-        return True
+        assert True, "Imports should succeed"
     except Exception as e:
         print(f"  ❌ Parameter spaces test failed: {e}")
-        return False
+        assert False, "Test should not fail"
 
 def test_objective_functions():
     """Test objective function calculations."""
@@ -73,7 +73,7 @@ def test_objective_functions():
         from src.features.optimization import ObjectiveFunctions
         
         # Create synthetic test data
-        dates = pd.date_range(start=datetime.now() - timedelta(days=5), periods=100, freq='1H')
+        dates = pd.date_range(start=datetime.now() - timedelta(days=5), periods=100, freq='1h')
         np.random.seed(42)
         
         data = pd.DataFrame({
@@ -120,10 +120,10 @@ def test_objective_functions():
         assert isinstance(composite, (int, float)), "Composite score should be numeric"
         
         print(f"  ✅ Objective functions working - Sharpe: {sharpe:.3f}, Win Rate: {win_rate:.3f}")
-        return True
+        assert True, "Imports should succeed"
     except Exception as e:
         print(f"  ❌ Objective functions test failed: {e}")
-        return False
+        assert False, "Test should not fail"
 
 def test_smart_optimizer():
     """Test basic optimizer functionality."""
@@ -134,7 +134,7 @@ def test_smart_optimizer():
         from skopt.space import Integer, Real
         
         # Create minimal test data
-        dates = pd.date_range(start=datetime.now() - timedelta(days=2), periods=50, freq='1H')
+        dates = pd.date_range(start=datetime.now() - timedelta(days=2), periods=50, freq='1h')
         np.random.seed(42)
         
         data = pd.DataFrame({
@@ -184,10 +184,10 @@ def test_smart_optimizer():
         assert len(result.best_params) == len(parameter_names), "Should have all parameters"
         
         print(f"  ✅ Smart optimizer working - Best score: {result.best_score:.4f}")
-        return True
+        assert True, "Imports should succeed"
     except Exception as e:
         print(f"  ❌ Smart optimizer test failed: {e}")
-        return False
+        assert False, "Test should not fail"
 
 def test_market_regime_detector():
     """Test market regime detection."""
@@ -197,7 +197,7 @@ def test_market_regime_detector():
         from src.features.optimization import MarketRegimeDetector
         
         # Create test data with clear regime patterns
-        dates = pd.date_range(start=datetime.now() - timedelta(days=10), periods=200, freq='1H')
+        dates = pd.date_range(start=datetime.now() - timedelta(days=10), periods=200, freq='1h')
         np.random.seed(42)
         
         # Create trending data in first half, ranging in second half
@@ -234,10 +234,10 @@ def test_market_regime_detector():
         assert len(regime_params) > 0, "Should have some parameters"
         
         print(f"  ✅ Market regime detector working - Current: {regime_result.current_regime.value}")
-        return True
+        assert True, "Imports should succeed"
     except Exception as e:
         print(f"  ❌ Market regime detector test failed: {e}")
-        return False
+        assert False, "Test should not fail"
 
 def test_feature_importance_filter():
     """Test feature importance filtering."""
@@ -247,7 +247,7 @@ def test_feature_importance_filter():
         from src.features.optimization import FeatureImportanceFilter, FeatureFilterConfig
         
         # Create test data
-        dates = pd.date_range(start=datetime.now() - timedelta(days=5), periods=100, freq='1H')
+        dates = pd.date_range(start=datetime.now() - timedelta(days=5), periods=100, freq='1h')
         np.random.seed(42)
         
         data = pd.DataFrame({
@@ -277,10 +277,10 @@ def test_feature_importance_filter():
         assert len(rankings) > 0, "Should have some indicator rankings"
         
         print(f"  ✅ Feature importance filter working - {len(rankings)} indicators ranked")
-        return True
+        assert True, "Imports should succeed"
     except Exception as e:
         print(f"  ❌ Feature importance filter test failed: {e}")
-        return False
+        assert False, "Test should not fail"
 
 def run_all_tests():
     """Run all component tests."""

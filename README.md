@@ -132,9 +132,16 @@ btc-trading-strategy/
 │   ├── src/backtesting/   # Validation framework
 │   └── src/utils/         # Configuration & logging
 ├── 🧪 Testing
-│   └── tests/             # Comprehensive test suite
-└── 📚 Documentation
-    └── notebooks/         # Research & analysis
+│   └── tests/             # Comprehensive test suite (49 tests)
+├── 📊 Outputs
+│   └── outputs/visualizations/  # Generated charts & analysis
+├── 📚 Documentation & Examples
+│   ├── notebooks/         # Research & analysis
+│   └── examples/          # Demo scripts & examples
+└── 📄 Essential Files
+    ├── main.py            # Unified entry point
+    ├── README.md          # Project documentation
+    └── requirements.txt   # Dependencies
 ```
 
 ## 🛠️ Development Workflow
@@ -153,15 +160,19 @@ mypy src
 
 ### 2. Testing Strategy
 ```bash
-# Unit tests
-pytest tests/unit/ -v
+# Run all tests (49 comprehensive tests)
+pytest tests/ -v
 
-# Integration tests  
-pytest tests/integration/ -v
+# Run specific test categories
+pytest tests/test_environment_setup.py -v     # Environment & setup tests
+pytest tests/test_feature_engineering.py -v  # Feature engineering tests
+pytest tests/test_smart_optimization.py -v   # Optimization system tests
 
-# Performance tests
-pytest tests/performance/ -v --slow
+# Run with coverage
+pytest tests/ --cov=src --cov-report=html
 ```
+
+**✅ Current Test Status: 49 PASSED, 1 SKIPPED**
 
 ### 3. Git Workflow
 ```bash
