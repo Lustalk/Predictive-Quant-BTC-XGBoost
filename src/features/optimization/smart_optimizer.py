@@ -341,27 +341,40 @@ class SmartOptimizer:
         try:
             # Use the GP model to estimate parameter importance
             # This is a simplified approach - more sophisticated methods exist
-            X = np.array(result.x_iters)
-            y = np.array(result.func_vals)
+            X = np.array(result.x_iters, dtype=float)  # Ensure numeric type
+            y = np.array(result.func_vals, dtype=float)  # Ensure numeric type
             
             importance = {}
             for i, param_name in enumerate(parameter_names):
-                # Calculate variance in objective function for this parameter
-                param_values = X[:, i]
-                correlations = []
-                
-                for j, val in enumerate(param_values):
-                    similar_mask = np.abs(param_values - val) < (param_values.std() * 0.1)
-                    if similar_mask.sum() > 1:
-                        similar_scores = y[similar_mask]
-                        correlations.append(similar_scores.std())
-                
-                importance[param_name] = np.mean(correlations) if correlations else 0.0
+                try:
+                    # Calculate variance in objective function for this parameter
+                    param_values = X[:, i].astype(float)  # Ensure float type
+                    correlations = []
+                    
+                    param_std = param_values.std()
+                    if param_std > 0:  # Only process if there's variation
+                        for val in param_values[:10]:  # Limit iterations for performance
+                            diff_threshold = param_std * 0.1
+                            similar_mask = np.abs(param_values - val) < diff_threshold
+                            if similar_mask.sum() > 1:
+                                similar_scores = y[similar_mask]
+                                if len(similar_scores) > 1:
+                                    correlations.append(similar_scores.std())
+                    
+                    importance[param_name] = np.mean(correlations) if correlations else 0.1
+                    
+                except (ValueError, TypeError, IndexError) as param_error:
+                    # Handle individual parameter errors gracefully
+                    self.logger.debug(f"Error processing parameter {param_name}: {param_error}")
+                    importance[param_name] = 0.1  # Default small importance
             
             # Normalize importance scores
             total_importance = sum(importance.values())
             if total_importance > 0:
                 importance = {k: v/total_importance for k, v in importance.items()}
+            else:
+                # Fallback to equal importance
+                importance = {name: 1.0/len(parameter_names) for name in parameter_names}
             
             return importance
             

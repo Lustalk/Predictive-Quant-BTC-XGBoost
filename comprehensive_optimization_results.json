@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-07-31T23:36:00.148502",
+  "best_score": 0.125,
+  "optimization_time": 311.3658273220062,
+  "total_evaluations": 300,
+  "optimal_tp_sl": {
+    "stop_loss": 0.04976376184598653,
+    "take_profit": 0.11699986068486189,
+    "risk_reward_ratio": 1.3998996632720115,
+    "position_timeout": 
