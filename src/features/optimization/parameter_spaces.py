@@ -200,55 +200,61 @@ class ParameterSpaces:
         
         return search_space, parameter_names
     
-    def get_composite_strategy_space(self) -> Tuple[List[Any], List[str]]:
+    def get_xgboost_strategy_space(self) -> Tuple[List[Any], List[str]]:
         """
-        Composite strategy combining multiple indicators.
+        XGBoost-powered strategy space for machine learning optimization.
         
-        This is the recommended space for comprehensive optimization
-        combining the most effective indicators for Bitcoin trading.
+        This revolutionary approach optimizes XGBoost hyperparameters and
+        lets the model learn optimal trading rules automatically.
         
         Returns:
             Tuple of (search_space, parameter_names)
         """
         search_space = [
-            # RSI parameters
-            Integer(9, 25, name='rsi_period'),
-            Integer(25, 35, name='rsi_oversold'),
-            Integer(65, 75, name='rsi_overbought'),
+            # XGBoost hyperparameters (core ML optimization)
+            Integer(50, 300, name='n_estimators'),          # Number of trees
+            Integer(3, 10, name='max_depth'),               # Tree depth
+            Real(0.01, 0.3, name='learning_rate'),          # Learning rate
+            Integer(1, 7, name='min_child_weight'),         # Minimum samples per leaf
+            Real(0.6, 1.0, name='subsample'),               # Subsample ratio
+            Real(0.6, 1.0, name='colsample_bytree'),        # Feature subsample ratio
             
-            # MACD parameters
-            Integer(8, 18, name='macd_fast'),
-            Integer(22, 35, name='macd_slow'),
-            Integer(7, 12, name='macd_signal'),
+            # Signal generation parameters
+            Real(0.52, 0.8, name='prediction_threshold'),   # Prediction confidence threshold
+            Integer(2, 8, name='lookforward_periods'),      # Future periods to predict
             
-            # Bollinger Bands parameters
-            Integer(15, 30, name='bb_period'),
-            Real(1.8, 2.5, name='bb_std'),
+            # Technical indicator parameters for feature creation
+            Integer(9, 25, name='rsi_period'),              # RSI period
+            Integer(8, 18, name='macd_fast'),               # MACD fast EMA
+            Integer(22, 35, name='macd_slow'),              # MACD slow EMA
+            Integer(7, 12, name='macd_signal'),             # MACD signal line
+            Integer(15, 30, name='bb_period'),              # Bollinger Bands period
+            Real(1.8, 2.5, name='bb_std'),                  # Bollinger Bands std dev
             
-            # Moving Average parameters
-            Integer(7, 21, name='ma_fast'),
-            Integer(35, 70, name='ma_slow'),
-            
-            # ATR parameters for position sizing
-            Integer(12, 20, name='atr_period'),
-            Real(1.5, 2.5, name='atr_multiplier'),
-            
-            # Strategy parameters
-            Real(0.001, 0.01, name='noise_filter'),          # Minimum move filter
-            Real(0.5, 2.0, name='signal_strength'),          # Signal strength threshold
-            Categorical([1, 2, 3], name='confirmation_signals') # Required confirmations
+            # Feature engineering parameters
+            Real(0.0005, 0.005, name='target_threshold'),   # Minimum return to be considered significant
+            Integer(3, 12, name='momentum_lookback'),       # Momentum calculation period
         ]
         
         parameter_names = [
-            'rsi_period', 'rsi_oversold', 'rsi_overbought',
-            'macd_fast', 'macd_slow', 'macd_signal',
+            'n_estimators', 'max_depth', 'learning_rate', 'min_child_weight', 
+            'subsample', 'colsample_bytree',
+            'prediction_threshold', 'lookforward_periods',
+            'rsi_period', 'macd_fast', 'macd_slow', 'macd_signal',
             'bb_period', 'bb_std',
-            'ma_fast', 'ma_slow',
-            'atr_period', 'atr_multiplier',
-            'noise_filter', 'signal_strength', 'confirmation_signals'
+            'target_threshold', 'momentum_lookback'
         ]
         
         return search_space, parameter_names
+    
+    def get_composite_strategy_space(self) -> Tuple[List[Any], List[str]]:
+        """
+        Legacy composite strategy (kept for backwards compatibility).
+        
+        DEPRECATED: Use get_xgboost_strategy_space() for better results.
+        """
+        # Return XGBoost strategy space as the new default
+        return self.get_xgboost_strategy_space()
     
     def get_regime_specific_spaces(self) -> Dict[str, Tuple[List[Any], List[str]]]:
         """

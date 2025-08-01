@@ -291,14 +291,14 @@ class ObjectiveFunctions:
     
     def _generate_signals(self, data: pd.DataFrame, params: Dict[str, Any]) -> pd.Series:
         """
-        Generate trading signals based on technical indicator parameters.
+        Generate trading signals using XGBoost to learn optimal rules automatically.
         
-        This is a simplified signal generation logic. In practice, you would
-        implement your specific trading strategy logic here.
+        This revolutionary approach uses machine learning to discover optimal
+        trading patterns instead of hardcoded rules.
         
         Args:
             data: Historical OHLCV data
-            params: Technical indicator parameters
+            params: XGBoost hyperparameters and indicator parameters
             
         Returns:
             Trading signals (1 = buy, -1 = sell, 0 = hold)
@@ -306,37 +306,211 @@ class ObjectiveFunctions:
         signals = pd.Series(0, index=data.index)
         
         try:
-            # Extract parameters (example for RSI + MACD strategy)
-            rsi_period = params.get('rsi_period', 14)
-            rsi_oversold = params.get('rsi_oversold', 30)
-            rsi_overbought = params.get('rsi_overbought', 70)
+            # XGBoost hyperparameters from optimization
+            n_estimators = params.get('n_estimators', 100)
+            max_depth = params.get('max_depth', 6)
+            learning_rate = params.get('learning_rate', 0.1)
+            min_child_weight = params.get('min_child_weight', 1)
+            subsample = params.get('subsample', 0.8)
+            colsample_bytree = params.get('colsample_bytree', 0.8)
             
+            # Technical indicator parameters
+            rsi_period = params.get('rsi_period', 14)
             macd_fast = params.get('macd_fast', 12)
             macd_slow = params.get('macd_slow', 26)
             macd_signal = params.get('macd_signal', 9)
-            
             bb_period = params.get('bb_period', 20)
             bb_std = params.get('bb_std', 2.0)
             
-            # Calculate indicators
+            # Signal generation parameters
+            prediction_threshold = params.get('prediction_threshold', 0.55)
+            lookforward_periods = params.get('lookforward_periods', 4)
+            target_threshold = params.get('target_threshold', 0.001)
+            momentum_lookback = params.get('momentum_lookback', 5)
+            
+            # Calculate comprehensive technical indicators
+            features_df = self._create_ml_features(data, params)
+            
+            if len(features_df) < 50:  # Need minimum data for training
+                return signals
+            
+            # Create target variable (future price direction)
+            target = self._create_target_variable(data, lookforward_periods, target_threshold)
+            
+            # Align features and target
+            min_length = min(len(features_df), len(target))
+            features_df = features_df.iloc[:min_length]
+            target = target.iloc[:min_length]
+            
+            # Remove rows with NaN
+            valid_mask = ~(features_df.isna().any(axis=1) | target.isna())
+            features_clean = features_df[valid_mask]
+            target_clean = target[valid_mask]
+            
+            if len(features_clean) < 30:  # Need minimum samples
+                return signals
+            
+            # Train XGBoost model
+            try:
+                import xgboost as xgb
+                
+                # Split data for training (use first 70% for training, rest for signals)
+                split_idx = int(len(features_clean) * 0.7)
+                
+                X_train = features_clean.iloc[:split_idx]
+                y_train = target_clean.iloc[:split_idx]
+                X_predict = features_clean.iloc[split_idx:]
+                
+                if len(X_train) < 20 or len(X_predict) < 5:
+                    return signals
+                
+                # Configure XGBoost model
+                model = xgb.XGBClassifier(
+                    n_estimators=int(n_estimators),
+                    max_depth=int(max_depth),
+                    learning_rate=learning_rate,
+                    min_child_weight=int(min_child_weight),
+                    subsample=subsample,
+                    colsample_bytree=colsample_bytree,
+                    random_state=42,
+                    eval_metric='logloss',
+                    verbosity=0
+                )
+                
+                # Train the model
+                model.fit(X_train, y_train)
+                
+                # Generate predictions
+                predictions = model.predict_proba(X_predict)[:, 1]  # Probability of positive class
+                
+                # Convert predictions to trading signals
+                prediction_signals = pd.Series(0, index=X_predict.index)
+                
+                # Buy signals: High confidence of price increase
+                prediction_signals[predictions > prediction_threshold] = 1
+                
+                # Sell signals: High confidence of price decrease  
+                prediction_signals[predictions < (1 - prediction_threshold)] = -1
+                
+                # Map back to original index
+                signals.loc[prediction_signals.index] = prediction_signals
+                
+                return signals
+                
+            except ImportError:
+                self.logger.warning("XGBoost not available, falling back to simple momentum strategy")
+                return self._fallback_momentum_strategy(data, params)
+            
+        except Exception as e:
+            self.logger.warning(f"Error in XGBoost signal generation: {e}")
+            return self._fallback_momentum_strategy(data, params)
+    
+    def _create_ml_features(self, data: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
+        """Create comprehensive features for XGBoost training."""
+        features = pd.DataFrame(index=data.index)
+        
+        try:
+            # Extract indicator parameters
+            rsi_period = params.get('rsi_period', 14)
+            macd_fast = params.get('macd_fast', 12)
+            macd_slow = params.get('macd_slow', 26)
+            macd_signal = params.get('macd_signal', 9)
+            bb_period = params.get('bb_period', 20)
+            bb_std = params.get('bb_std', 2.0)
+            
+            # Price features
+            features['returns'] = data['close'].pct_change()
+            features['log_returns'] = np.log(data['close'] / data['close'].shift(1))
+            features['price_sma_ratio'] = data['close'] / data['close'].rolling(20).mean()
+            features['high_low_ratio'] = data['high'] / data['low']
+            features['close_open_ratio'] = data['close'] / data['open']
+            
+            # Volume features
+            features['volume_sma_ratio'] = data['volume'] / data['volume'].rolling(20).mean()
+            features['price_volume_corr'] = data['close'].rolling(20).corr(data['volume'])
+            
+            # Technical indicators
             rsi = self.technical_indicators.rsi(data['close'], rsi_period)
+            features['rsi'] = rsi
+            features['rsi_oversold'] = (rsi < 30).astype(int)
+            features['rsi_overbought'] = (rsi > 70).astype(int)
+            features['rsi_momentum'] = rsi.diff()
+            
+            # MACD features
             macd_data = self.technical_indicators.macd(data['close'], macd_fast, macd_slow, macd_signal)
+            features['macd'] = macd_data['MACD']
+            features['macd_signal'] = macd_data['Signal']
+            features['macd_histogram'] = macd_data['Histogram']
+            features['macd_crossover'] = (macd_data['MACD'] > macd_data['Signal']).astype(int)
+            
+            # Bollinger Bands features
             bb_data = self.technical_indicators.bollinger_bands(data['close'], bb_period, bb_std)
+            features['bb_position'] = bb_data['BB_Position']
+            features['bb_width'] = bb_data['BB_Width']
+            features['bb_squeeze'] = (bb_data['BB_Width'] < bb_data['BB_Width'].rolling(20).mean() * 0.5).astype(int)
             
-            # Generate signals (example strategy)
-            # Buy signal: RSI oversold AND MACD bullish AND price near lower BB
-            buy_condition = (
-                (rsi < rsi_oversold) & 
-                (macd_data['MACD'] > macd_data['Signal']) &
-                (data['close'] < bb_data['BB_Lower'] * 1.02)  # Within 2% of lower band
-            )
+            # Momentum features
+            features['momentum_5'] = data['close'] / data['close'].shift(5) - 1
+            features['momentum_10'] = data['close'] / data['close'].shift(10) - 1
+            features['momentum_20'] = data['close'] / data['close'].shift(20) - 1
             
-            # Sell signal: RSI overbought AND MACD bearish AND price near upper BB
-            sell_condition = (
-                (rsi > rsi_overbought) & 
-                (macd_data['MACD'] < macd_data['Signal']) &
-                (data['close'] > bb_data['BB_Upper'] * 0.98)  # Within 2% of upper band
-            )
+            # Volatility features
+            features['volatility'] = data['close'].pct_change().rolling(20).std()
+            features['atr'] = self.technical_indicators.atr(data['high'], data['low'], data['close'], 14)
+            features['atr_normalized'] = features['atr'] / data['close']
+            
+            # Moving averages
+            features['sma_5'] = data['close'].rolling(5).mean()
+            features['sma_20'] = data['close'].rolling(20).mean()
+            features['sma_50'] = data['close'].rolling(50).mean()
+            features['price_above_sma5'] = (data['close'] > features['sma_5']).astype(int)
+            features['price_above_sma20'] = (data['close'] > features['sma_20']).astype(int)
+            features['sma_trend'] = (features['sma_5'] > features['sma_20']).astype(int)
+            
+            # Market structure features
+            features['higher_high'] = (data['high'] > data['high'].shift(1)).astype(int)
+            features['higher_low'] = (data['low'] > data['low'].shift(1)).astype(int)
+            features['trend_strength'] = features['higher_high'] + features['higher_low']
+            
+            # Fill NaN values
+            features = features.fillna(method='ffill').fillna(0)
+            
+            return features
+            
+        except Exception as e:
+            self.logger.warning(f"Error creating ML features: {e}")
+            return pd.DataFrame(index=data.index)
+    
+    def _create_target_variable(self, data: pd.DataFrame, lookforward_periods: int = 4, threshold: float = 0.001) -> pd.Series:
+        """Create target variable for XGBoost training (future price direction)."""
+        try:
+            # Calculate future returns
+            future_returns = data['close'].pct_change(periods=lookforward_periods).shift(-lookforward_periods)
+            
+            # Create binary target: 1 if price goes up significantly, 0 otherwise
+            target = (future_returns > threshold).astype(int)
+            
+            return target
+            
+        except Exception as e:
+            self.logger.warning(f"Error creating target variable: {e}")
+            return pd.Series(0, index=data.index)
+    
+    def _fallback_momentum_strategy(self, data: pd.DataFrame, params: Dict[str, Any]) -> pd.Series:
+        """Fallback momentum strategy if XGBoost fails."""
+        signals = pd.Series(0, index=data.index)
+        
+        try:
+            # Simple momentum strategy
+            short_ma = data['close'].rolling(5).mean()
+            long_ma = data['close'].rolling(20).mean()
+            rsi = self.technical_indicators.rsi(data['close'], 14)
+            
+            # Buy: Short MA > Long MA and RSI not overbought
+            buy_condition = (short_ma > long_ma) & (rsi < 75)
+            
+            # Sell: Short MA < Long MA and RSI not oversold
+            sell_condition = (short_ma < long_ma) & (rsi > 25)
             
             signals[buy_condition] = 1
             signals[sell_condition] = -1
@@ -344,7 +518,7 @@ class ObjectiveFunctions:
             return signals
             
         except Exception as e:
-            self.logger.warning(f"Error generating signals: {e}")
+            self.logger.warning(f"Error in fallback strategy: {e}")
             return signals
     
     def _calculate_strategy_returns(self, data: pd.DataFrame, signals: pd.Series) -> pd.Series:

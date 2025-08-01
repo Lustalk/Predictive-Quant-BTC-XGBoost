@@ -263,34 +263,36 @@ class SmartOptimizationDemo:
             # Initialize optimizer
             optimizer = SmartOptimizer(config)
             
-            # Get parameter space (focus on top indicators)
-            top_indicators = important_indicators.get('top_indicators', ['RSI', 'MACD'])
+            # Use XGBoost strategy space for intelligent signal generation
+            parameter_space, parameter_names = self.parameter_spaces.get_xgboost_strategy_space()
             
-            if 'RSI' in top_indicators and 'MACD' in top_indicators:
-                # Use composite strategy space
-                parameter_space, parameter_names = self.parameter_spaces.get_composite_strategy_space()
-            else:
-                # Use RSI space as fallback
-                parameter_space, parameter_names = self.parameter_spaces.get_rsi_space()
+            print(f"  🎯 Optimizing {len(parameter_names)} XGBoost parameters")
+            print(f"  🧠 XGBoost hyperparameters: n_estimators, max_depth, learning_rate, etc.")
+            print(f"  📊 Technical indicators: RSI, MACD, Bollinger Bands for features")
+            print(f"  🎯 Signal generation: prediction_threshold, lookforward_periods")
             
-            print(f"  🎯 Optimizing {len(parameter_names)} parameters: {parameter_names}")
-            
-            # Define multi-objective function
-            def multi_objective_function(data, params):
-                """Multi-objective function combining Sharpe, drawdown, and win rate"""
+            # Define multi-objective function for XGBoost strategy
+            def xgboost_objective_function(data, params):
+                """XGBoost-powered multi-objective function"""
                 sharpe = self.objective_functions.sharpe_ratio_objective(data, params)
                 drawdown = self.objective_functions.max_drawdown_objective(data, params)
                 win_rate = self.objective_functions.win_rate_objective(data, params)
+                profit_factor = self.objective_functions.profit_factor_objective(data, params)
                 
-                # Weighted combination (prioritize Sharpe ratio)
-                composite_score = 0.5 * sharpe + 0.3 * drawdown + 0.2 * win_rate
+                # Weighted combination optimized for XGBoost strategies
+                composite_score = (
+                    0.4 * sharpe +           # Risk-adjusted returns
+                    0.3 * drawdown +         # Risk management  
+                    0.2 * win_rate +         # Consistency
+                    0.1 * min(profit_factor/3.0, 1.0)  # Efficiency (capped)
+                )
                 return composite_score
             
-            # Run optimization
+            # Run XGBoost optimization
             result = optimizer.optimize_indicators(
                 data=data,
                 parameter_space=parameter_space,
-                objective_function=multi_objective_function,
+                objective_function=xgboost_objective_function,
                 parameter_names=parameter_names
             )
             
