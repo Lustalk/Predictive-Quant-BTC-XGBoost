@@ -52,7 +52,7 @@ class TradingVisualizer:
                                    results: Dict[str, Any],
                                    model_metrics: Dict[str, float],
                                    backtest_results: Dict[str, float],
-                                   save_path: str = 'trading_dashboard.png') -> None:
+                                   save_path: str = 'outputs/visualizations/trading_dashboard.png') -> None:
         """
         Create comprehensive performance dashboard.
         
@@ -111,7 +111,7 @@ class TradingVisualizer:
                                benchmark_returns: pd.Series,
                                signals: pd.Series,
                                prices: pd.Series,
-                               save_path: str = 'strategy_analysis.png') -> None:
+                               save_path: str = 'outputs/visualizations/strategy_analysis.png') -> None:
         """
         Create detailed strategy analysis charts.
         
@@ -200,7 +200,7 @@ class TradingVisualizer:
                               feature_importance: pd.DataFrame,
                               correlation_matrix: Optional[pd.DataFrame] = None,
                               feature_evolution: Optional[pd.DataFrame] = None,
-                              save_path: str = 'feature_analysis.png') -> None:
+                              save_path: str = 'outputs/visualizations/feature_analysis.png') -> None:
         """
         Create comprehensive feature analysis charts.
         
@@ -267,7 +267,7 @@ class TradingVisualizer:
                                       data: pd.DataFrame,
                                       indicators: Dict[str, pd.Series],
                                       signals: pd.Series,
-                                      save_path: str = 'technical_analysis.png') -> None:
+                                      save_path: str = 'outputs/visualizations/technical_analysis.png') -> None:
         """
         Create technical analysis chart with indicators and signals.
         
@@ -352,7 +352,7 @@ class TradingVisualizer:
     def create_risk_analysis(self,
                            returns: pd.Series,
                            benchmark_returns: pd.Series,
-                           save_path: str = 'risk_analysis.png') -> None:
+                           save_path: str = 'outputs/visualizations/risk_analysis.png') -> None:
         """
         Create comprehensive risk analysis charts.
         

@@ -62,7 +62,7 @@ class XGBoostDiagnosticVisualizer:
                                                 y_test: pd.Series,
                                                 feature_names: List[str],
                                                 training_history: Optional[Dict] = None,
-                                                save_path: str = 'xgboost_diagnostic_dashboard.png') -> None:
+                                                save_path: str = 'outputs/visualizations/xgboost_diagnostic_dashboard.png') -> None:
         """
         Create comprehensive diagnostic dashboard showing XGBoost thinking process.
         
@@ -141,7 +141,7 @@ class XGBoostDiagnosticVisualizer:
                                         y_train: pd.Series,
                                         y_test: pd.Series,
                                         feature_names: List[str],
-                                        save_path: str = 'decision_boundary_analysis.png') -> None:
+                                        save_path: str = 'outputs/visualizations/decision_boundary_analysis.png') -> None:
         """
         Create detailed decision boundary and model behavior analysis.
         
@@ -206,7 +206,7 @@ class XGBoostDiagnosticVisualizer:
                                y_train: pd.Series,
                                y_test: pd.Series,
                                feature_names: List[str],
-                               save_path: str = 'feature_deep_dive.png') -> None:
+                               save_path: str = 'outputs/visualizations/feature_deep_dive.png') -> None:
         """
         Create comprehensive feature analysis and selection insights.
         
@@ -255,7 +255,7 @@ class XGBoostDiagnosticVisualizer:
                                                X_test: pd.DataFrame,
                                                y_train: pd.Series,
                                                y_test: pd.Series,
-                                               save_path: str = 'optimization_insights.png') -> None:
+                                               save_path: str = 'outputs/visualizations/optimization_insights.png') -> None:
         """
         Create performance optimization insights and recommendations.
         

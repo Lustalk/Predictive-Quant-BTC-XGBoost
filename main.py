@@ -617,7 +617,7 @@ class PredictiveQuantBTCSystem:
                 accuracy=metrics['test_accuracy'],
                 sharpe_ratio=backtest_results['sharpe_ratio'],
                 max_drawdown=backtest_results['max_drawdown'],
-                save_path='performance_dashboard.png'
+                save_path='outputs/visualizations/performance_dashboard.png'
             )
             
             # 2. Feature Analysis
@@ -626,7 +626,7 @@ class PredictiveQuantBTCSystem:
             self.visualizer.create_feature_analysis(
                 feature_importance=metrics['feature_importance'],
                 correlation_matrix=correlation_matrix,
-                save_path='feature_analysis.png'
+                save_path='outputs/visualizations/feature_analysis.png'
             )
             
             # 3. Technical Analysis
@@ -635,7 +635,7 @@ class PredictiveQuantBTCSystem:
                 data=data,
                 signals=backtest_results['signals'],
                 predictions=metrics['y_test_proba'],
-                save_path='technical_analysis.png'
+                save_path='outputs/visualizations/technical_analysis.png'
             )
             
             # 4. Comprehensive Diagnostic Dashboard
@@ -648,7 +648,7 @@ class PredictiveQuantBTCSystem:
                 y_test=y_test,
                 y_proba_test=metrics['y_test_proba'],
                 feature_names=feature_names,
-                save_path='diagnostic_dashboard.png'
+                save_path='outputs/visualizations/diagnostic_dashboard.png'
             )
             
             # 5. Feature Deep Dive
@@ -658,7 +658,7 @@ class PredictiveQuantBTCSystem:
                 X_train=X_train,
                 y_train=y_train,
                 feature_names=feature_names,
-                save_path='feature_deep_dive.png'
+                save_path='outputs/visualizations/feature_deep_dive.png'
             )
             
             print("   ✅ All visualizations created successfully!")
@@ -732,11 +732,11 @@ class PredictiveQuantBTCSystem:
             print(f"   ⚡ Execution Time: {execution_time:.1f} seconds")
             print()
             print("🎨 GENERATED FILES:")
-            print("   📊 performance_dashboard.png - Trading performance analysis")
-            print("   🔍 feature_analysis.png - Feature importance and correlations")
-            print("   📈 technical_analysis.png - Technical indicators and signals")
-            print("   🔬 diagnostic_dashboard.png - Model diagnostic insights")
-            print("   🔍 feature_deep_dive.png - Advanced feature analysis")
+            print("   📊 outputs/visualizations/performance_dashboard.png - Trading performance analysis")
+            print("   🔍 outputs/visualizations/feature_analysis.png - Feature importance and correlations")
+            print("   📈 outputs/visualizations/technical_analysis.png - Technical indicators and signals")
+            print("   🔬 outputs/visualizations/diagnostic_dashboard.png - Model diagnostic insights")
+            print("   🔍 outputs/visualizations/feature_deep_dive.png - Advanced feature analysis")
             print()
             print("🚀 Use these insights to optimize your trading strategy!")
             print("=" * 80)
