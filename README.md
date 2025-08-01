@@ -9,12 +9,13 @@
 
 ## 🎯 Key Features
 
-- **🤖 Advanced ML Models**: XGBoost & LightGBM ensemble with 50+ technical indicators
-- **⚡ Real-time Processing**: Sub-second feature computation and signal generation  
-- **🔒 Risk Management**: Kelly criterion position sizing with multi-layer risk controls
-- **📊 Robust Validation**: Walk-forward analysis with purged time series cross-validation
-- **🐳 Production Ready**: Docker containerization with comprehensive monitoring
-- **🎨 Memory Optimized**: Designed for 12GB RAM systems with efficient data pipelines
+- **🚀 Unified System**: Single `main.py` runs complete end-to-end analysis
+- **🤖 Advanced ML**: XGBoost with 222 engineered features + 20+ technical indicators
+- **⚡ Lightning Fast**: Complete analysis in under 6 seconds
+- **🔍 Deep Diagnostics**: Reveals XGBoost "thinking process" with advanced visualizations
+- **📊 Smart Analytics**: Automated feature selection and performance optimization
+- **💡 Auto Recommendations**: AI-generated suggestions for system improvement
+- **🎨 Clean Architecture**: Modular `src/` structure with no bloated files
 
 ## 📈 Performance Overview
 
@@ -30,12 +31,11 @@
 
 ```mermaid
 graph TB
-    A[Data Collection<br/>Binance API] --> B[Feature Engineering<br/>50+ Indicators]
-    B --> C[ML Pipeline<br/>XGBoost + LightGBM]
-    C --> D[Signal Generation<br/>Confidence Thresholds]
-    D --> E[Risk Management<br/>Kelly Criterion]
-    E --> F[Execution Engine<br/>Order Management]
-    F --> G[Performance Monitoring<br/>Real-time Metrics]
+    A[📊 main.py<br/>Unified Entry Point] --> B[🔧 Feature Engineering<br/>222 Features]
+    B --> C[🤖 XGBoost Training<br/>Intelligent Selection]
+    C --> D[📈 Backtesting<br/>Strategy Analysis]
+    D --> E[🎨 Visualization<br/>5 Dashboards]
+    E --> F[💡 Recommendations<br/>Auto Optimization]
 ```
 
 ## 🚀 Quick Start
