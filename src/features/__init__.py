@@ -10,16 +10,16 @@ from .optimization import (
     ParameterSpaces,
     WalkForwardAnalyzer,
     MarketRegimeDetector,
-    FeatureImportanceFilter
+    FeatureImportanceFilter,
 )
 
 __all__ = [
-    'TechnicalIndicators',
-    'FeatureEngine',
-    'SmartOptimizer',
-    'ObjectiveFunctions',
-    'ParameterSpaces',
-    'WalkForwardAnalyzer',
-    'MarketRegimeDetector',
-    'FeatureImportanceFilter'
+    "TechnicalIndicators",
+    "FeatureEngine",
+    "SmartOptimizer",
+    "ObjectiveFunctions",
+    "ParameterSpaces",
+    "WalkForwardAnalyzer",
+    "MarketRegimeDetector",
+    "FeatureImportanceFilter",
 ]

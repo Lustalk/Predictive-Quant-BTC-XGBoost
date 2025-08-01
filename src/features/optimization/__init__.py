@@ -18,12 +18,12 @@ from .market_regime_detector import MarketRegimeDetector
 from .feature_importance_filter import FeatureImportanceFilter, FeatureFilterConfig
 
 __all__ = [
-    'SmartOptimizer',
-    'OptimizationConfig',
-    'ObjectiveFunctions', 
-    'ParameterSpaces',
-    'WalkForwardAnalyzer',
-    'MarketRegimeDetector',
-    'FeatureImportanceFilter',
-    'FeatureFilterConfig'
+    "SmartOptimizer",
+    "OptimizationConfig",
+    "ObjectiveFunctions",
+    "ParameterSpaces",
+    "WalkForwardAnalyzer",
+    "MarketRegimeDetector",
+    "FeatureImportanceFilter",
+    "FeatureFilterConfig",
 ]
